@@ -26,8 +26,3 @@ Antes de ejecutar el script, tus archivos sueltos se verán así. Al terminar, s
  ├── 📷 captura.png            ➔   📂 Imagenes/captura.png
  ├── 🎬 intro_proyecto.mp4     ➔   📂 Videos/intro_proyecto.mp4
  └── ⚙️ node_installer.msi     ➔   📂 Programas_Instaladores/node_installer.msi
-
-
- ---
-
-> 💡 **Tip final:** Para que se vea aún mejor en tu perfil principal, asegúrate de ponerle etiquetas (tags) a tu repositorio de GitHub como `python`, `automation`, `cli` y `script`. ¡A subirlo!
