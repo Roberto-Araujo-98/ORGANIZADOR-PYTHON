@@ -20,8 +20,8 @@ def ordenar_carpeta(ruta_objetivo):
     
     # Listar todos los archivos sueltos
     for archivo in os.listdir():
-        # Ignorar si es una carpeta o el propio script
-        if os.path.isdir(archivo) or archivo == 'organizador.py':
+        # Ignorar si es una carpeta
+        if os.path.isdir(archivo):
             continue
             
         # Extraer la extensión del archivo en minúsculas
@@ -38,20 +38,36 @@ def ordenar_carpeta(ruta_objetivo):
                 
                 # Mover el archivo
                 shutil.move(archivo, os.path.join(carpeta, archivo))
-                print(os.path.join("Movido:", archivo, "->", carpeta))
+                print(f"Movido: {archivo} -> {carpeta}")
                 movido = True
                 break
         
-        # Opcional: Mandar a "Otros" si no coincide con ninguna extensión
+        # Opcional: Mandar a "Otros" si tiene extensión pero no coincide con ninguna del mapa
         if not movido and ext != '':
             if not os.path.exists('Otros'):
                 os.makedirs('Otros')
             shutil.move(archivo, os.path.join('Otros', archivo))
 
 if __name__ == "__main__":
-    # Puedes poner '.' para ordenar la carpeta actual donde ejecutes el script,
-    # o poner una ruta directa como 'C:/Users/TuUsuario/Downloads'
-    ruta = '.' 
-    print(os.path.join("Iniciando ordenamiento en:", os.path.abspath(ruta)))
-    ordenar_carpeta(ruta)
-    print("¡Carpeta organizada con éxito!")
+    print("--- ORGANIZADOR DE CARPETAS AUTOMÁTICO ---")
+    
+    # Bucle infinito para pedir la ruta hasta que pongan una válida
+    while True:
+        ruta = input("Introduce la ruta de la carpeta que quieres organizar (o escribe 'salir'): ").strip()
+        
+        # Opción por si te arrepientes y quieres cerrar el script
+        if ruta.lower() == 'salir':
+            print("Proceso cancelado por el usuario.")
+            break
+            
+        # Validar si la ruta que escribió el usuario realmente existe en la PC
+        if os.path.exists(ruta):
+            if os.path.isdir(ruta):
+                print(f"\nIniciando ordenamiento en: {os.path.abspath(ruta)}")
+                ordenar_carpeta(ruta)
+                print("¡Carpeta organizada con éxito!\n")
+                break # Rompe el bucle porque ya terminó con éxito
+            else:
+                print("❌ Error: La ruta ingresada existe, pero es un archivo, no una carpeta. Intenta de nuevo.\n")
+        else:
+            print("❌ Error: La ruta no existe. Asegúrate de escribirla bien (Ej: C:/Users/USER/Downloads)\n")
