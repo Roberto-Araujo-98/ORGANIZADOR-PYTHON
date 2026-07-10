@@ -1,2 +1,0 @@
-# ORGANIZADOR-PYTHON
-codigo inicial
