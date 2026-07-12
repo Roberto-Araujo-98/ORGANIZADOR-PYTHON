@@ -1,73 +1,74 @@
 import os
 import shutil
+from datetime import datetime
 
 # Diccionario que define qué extensiones van a qué carpetas
 EXTENSIONES = {
     'Documentos': ['.pdf', '.docx', '.txt', '.xlsx', '.pptx', '.md'],
     'Imagenes': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'],
     'Videos': ['.mp4', '.mkv', '.avi', '.mov'],
-    'Programas_Instaladores': ['.exe', '.msi', '.deb', '.zip', '.rar', '.tar.gz']
+    'Audio': ['.mp3', '.wav', '.ogg', '.flac', '.m4a', '.wma'],
+    'Programacion_Codigo': ['.java', '.py', '.sql', '.js', '.ts', '.html', '.css', '.sh', '.cpp', '.c', '.rs'],
+    'Programas_Instaladores': ['.exe', '.msi', '.deb', '.zip', '.rar', '.tar.gz'],
+    'Aplicaciones_Moviles': ['.apk', '.aab']
 }
 
 def ordenar_carpeta(ruta_objetivo):
-    # Asegurarnos de que la ruta existe
     if not os.path.exists(ruta_objetivo):
-        print("La ruta no existe.")
+        print("❌ La ruta no existe.")
         return
 
-    # Cambiar al directorio objetivo
     os.chdir(ruta_objetivo)
+    archivos_encontrados = os.listdir()
     
-    # Listar todos los archivos sueltos
-    for archivo in os.listdir():
-        # Ignorar si es una carpeta
-        if os.path.isdir(archivo):
+    conteo_movidos = 0
+
+    for archivo in archivos_encontrados:
+        # 🔥 FILTRO DE SEGURIDAD: Ignora carpetas y evita que el script se mueva a sí mismo
+        if os.path.isdir(archivo) or archivo.startswith('organizador'):
             continue
             
-        # Extraer la extensión del archivo en minúsculas
         _, ext = os.path.splitext(archivo)
         ext = ext.lower()
         
-        # Buscar a qué categoría pertenece
         movido = False
         for carpeta, extensiones_validas in EXTENSIONES.items():
             if ext in extensiones_validas:
-                # Crear la carpeta si no existe
                 if not os.path.exists(carpeta):
                     os.makedirs(carpeta)
                 
-                # Mover el archivo
                 shutil.move(archivo, os.path.join(carpeta, archivo))
-                print(f"Movido: {archivo} -> {carpeta}")
+                print(f"📦 Movido: {archivo} -> {carpeta}")
+                conteo_movidos += 1
                 movido = True
                 break
         
-        # Opcional: Mandar a "Otros" si tiene extensión pero no coincide con ninguna del mapa
         if not movido and ext != '':
             if not os.path.exists('Otros'):
                 os.makedirs('Otros')
             shutil.move(archivo, os.path.join('Otros', archivo))
+            print(f"📦 Movido (Sin clasificar): {archivo} -> Otros")
+            conteo_movidos += 1
+
+    print(f"\n✨ ¡Limpieza terminada! Se organizaron {conteo_movidos} archivos.\n")
 
 if __name__ == "__main__":
-    print("--- ORGANIZADOR DE CARPETAS AUTOMÁTICO ---")
+    print("--- ORGANIZADOR DE CARPETAS INTERACTIVO ---")
     
-    # Bucle infinito para pedir la ruta hasta que pongan una válida
     while True:
-        ruta = input("Introduce la ruta de la carpeta que quieres organizar (o escribe 'salir'): ").strip()
+        # El .strip(' "\'') elimina espacios y comillas dobles o simples que se peguen por error
+        ruta = input("Introduce la ruta de la carpeta que quieres organizar (o escribe 'salir'): ").strip().strip('"').strip("'")
         
-        # Opción por si te arrepientes y quieres cerrar el script
         if ruta.lower() == 'salir':
-            print("Proceso cancelado por el usuario.")
+            print("👋 Proceso cancelado por el usuario.")
             break
             
-        # Validar si la ruta que escribió el usuario realmente existe en la PC
         if os.path.exists(ruta):
             if os.path.isdir(ruta):
-                print(f"\nIniciando ordenamiento en: {os.path.abspath(ruta)}")
+                print(f"\n🔍 Iniciando ordenamiento en: {os.path.abspath(ruta)}")
                 ordenar_carpeta(ruta)
-                print("¡Carpeta organizada con éxito!\n")
-                break # Rompe el bucle porque ya terminó con éxito
+                break 
             else:
-                print("❌ Error: La ruta ingresada existe, pero es un archivo, no una carpeta. Intenta de nuevo.\n")
+                print("❌ Error: La ruta ingresada es un archivo, no una carpeta. Intenta de nuevo.\n")
         else:
             print("❌ Error: La ruta no existe. Asegúrate de escribirla bien (Ej: C:/Users/USER/Downloads)\n")
